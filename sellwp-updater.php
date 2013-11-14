@@ -84,7 +84,7 @@ class SellWP_Updater {
      * @param string $domain
      * @param string $api_url
      */
-    function __construct($uuid, $lisense_key, $domain, $current_version) {
+    function __construct($uuid, $license_key, $domain, $current_version) {
 
         // Set the class public variables
         $this->current_version = $current_version;
