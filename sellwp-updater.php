@@ -155,30 +155,31 @@ class SellWP_Updater {
      */
     public function getRemote_version() {
         // Make the request
-        $request = wp_remote_post(
-            $this->update_path, 
-            array('body'              => array(
-                'action'            => 'version',
-                'uuid'              => $this->uuid,
-                'slug'              => $this->plugin_slug,
-                'license_key'       => $this->license_key,
-                'domain'            => $this->domain,
-                'installed_version' => $this->current_version
-        )));
+        if(!empty($this->license_key)){
+            $request = wp_remote_post(
+                $this->update_path, 
+                array('body'              => array(
+                    'action'            => 'version',
+                    'uuid'              => $this->uuid,
+                    'slug'              => $this->plugin_slug,
+                    'license_key'       => $this->license_key,
+                    'domain'            => $this->domain,
+                    'installed_version' => $this->current_version
+            )));
 
-        // Check for error and process
-        if (!is_wp_error($request)) {
-            if(wp_remote_retrieve_response_code(&$request) === 200) {
+            // Check for error and process
+            if (!is_wp_error($request)) {
+                if(wp_remote_retrieve_response_code(&$request) === 200) {
 
-                $response = maybe_unserialize(wp_remote_retrieve_body(&$response));
+                    $response = maybe_unserialize(wp_remote_retrieve_body(&$response));
 
-                update_option(basename($this->slug).'_update_msg',$response->message);
-                update_option(basename($this->slug).'_update_code',$response->code);
+                    update_option(basename($this->slug).'_update_msg',$response->message);
+                    update_option(basename($this->slug).'_update_code',$response->code);
 
-                return $response;
+                    return $response;
+                }
             }
         }
-
         return false;
     }
 
@@ -187,33 +188,35 @@ class SellWP_Updater {
      * @return bool|object
      */
     public function getRemote_information() {
-        $request = wp_remote_post(
-            $this->update_path, 
-            array('body' => array(
-                'action'            => 'info',
-                'uuid'              => $this->uuid,
-                'slug'              => $this->plugin_slug,
-                'license_key'       => $this->license_key,
-                'domain'            => $this->domain,
-                'installed_version' => $this->current_version
-        )));
+        if(!empty($this->license_key)){
+            $request = wp_remote_post(
+                $this->update_path, 
+                array('body' => array(
+                    'action'            => 'info',
+                    'uuid'              => $this->uuid,
+                    'slug'              => $this->plugin_slug,
+                    'license_key'       => $this->license_key,
+                    'domain'            => $this->domain,
+                    'installed_version' => $this->current_version
+            )));
 
-        // Check for error and process
-        if (!is_wp_error($request)) {
-            if(wp_remote_retrieve_response_code(&$request) === 200) {
+            // Check for error and process
+            if (!is_wp_error($request)) {
+                if(wp_remote_retrieve_response_code(&$request) === 200) {
 
-                $response = maybe_unserialize(wp_remote_retrieve_body(&$response));
+                    $response = maybe_unserialize(wp_remote_retrieve_body(&$response));
 
-                if(isset($response->message))
-                    update_option(basename($this->slug).'_update_msg',$response->message);
-                if(isset($response->code))
-                    update_option(basename($this->slug).'_update_code',$response->code);
+                    if(isset($response->message))
+                        update_option(basename($this->slug).'_update_msg',$response->message);
+                    if(isset($response->code))
+                        update_option(basename($this->slug).'_update_code',$response->code);
 
-                return $response;
+                    return $response;
+                }
             }
-        }
 
-        return false;
+            return false;
+        }
     }
 
 }
