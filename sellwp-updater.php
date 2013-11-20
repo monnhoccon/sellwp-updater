@@ -204,8 +204,10 @@ class SellWP_Updater {
 
                 $response = maybe_unserialize(wp_remote_retrieve_body(&$response));
 
-                update_option(basename($this->slug).'_update_msg',$response->message);
-                update_option(basename($this->slug).'_update_code',$response->code);
+                if(isset($response->message))
+                    update_option(basename($this->slug).'_update_msg',$response->message);
+                if(isset($response->code))
+                    update_option(basename($this->slug).'_update_code',$response->code);
 
                 return $response;
             }
