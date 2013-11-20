@@ -166,12 +166,13 @@ class SellWP_Updater {
                     'domain'            => $this->domain,
                     'installed_version' => $this->current_version
             )));
+            var_dump($request);
 
             // Check for error and process
             if (!is_wp_error($request)) {
-                if(wp_remote_retrieve_response_code(&$request) === 200) {
+                if(wp_remote_retrieve_response_code($request) === 200) {
 
-                    $response = maybe_unserialize(wp_remote_retrieve_body(&$response));
+                    $response = maybe_unserialize(wp_remote_retrieve_body($response));
 
                     update_option(basename($this->slug).'_update_msg',$response->message);
                     update_option(basename($this->slug).'_update_code',$response->code);
@@ -202,9 +203,9 @@ class SellWP_Updater {
 
             // Check for error and process
             if (!is_wp_error($request)) {
-                if(wp_remote_retrieve_response_code(&$request) === 200) {
+                if(wp_remote_retrieve_response_code($request) === 200) {
 
-                    $response = maybe_unserialize(wp_remote_retrieve_body(&$response));
+                    $response = maybe_unserialize(wp_remote_retrieve_body($response));
 
                     if(isset($response->message))
                         update_option(basename($this->slug).'_update_msg',$response->message);
