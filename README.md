@@ -17,7 +17,6 @@ function YOUR_THEME_OR_PLUGIN_PREFIX_sellwp_updater() {
     new SellWP_Updater(
 	    $uuid, 
 	    $license_key, 
-	    $domain, 
 	    $current_version
     );
 }
