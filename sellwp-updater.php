@@ -84,13 +84,13 @@ class SellWP_Updater {
      * @param string $domain
      * @param string $api_url
      */
-    function __construct($uuid, $license_key, $domain, $current_version) {
+    function __construct($uuid, $license_key, $current_version) {
 
         // Set the class public variables
         $this->current_version = $current_version;
         $this->uuid            = $uuid;
         $this->license_key     = $license_key;
-        $this->domain          = $domain;
+        $this->domain          = home_url();
         $this->api_url         = 'http://api.sellwp.co/v2/update';
         $this->plugin_slug     = plugin_basename(__FILE__);
         list ($t1, $t2)        = explode('/', $plugin_slug);
