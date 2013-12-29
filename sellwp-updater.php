@@ -40,6 +40,12 @@ class SellWP_Updater {
     public $uuid;  
 
     /**
+     * Unique theme or plugin id found in SellWP
+     * @var string
+     */
+    public $uuslug; 
+
+    /**
      * The plugin current version
      * @var string
      */
@@ -84,7 +90,7 @@ class SellWP_Updater {
      * @param string $domain
      * @param string $api_url
      */
-    function __construct($uuid, $license_key, $current_version) {
+    function __construct($uuid, $license_key, $current_version,$uuslug) {
 
         // Set the class public variables
         $this->current_version = $current_version;
@@ -92,8 +98,8 @@ class SellWP_Updater {
         $this->license_key     = $license_key;
         $this->domain          = home_url();
         $this->api_url         = 'http://api.sellwp.co/v2/update';
-        $this->plugin_slug     = plugin_basename(__FILE__);
-        list ($t1, $t2)        = explode('/', $plugin_slug);
+        $this->plugin_slug     = $uuslug;
+        list ($t1, $t2)        = explode('/', $this->plugin_slug);
         $this->slug            = str_replace('.php', '', $t2);
 
         // Define the alternative API for updating checking
@@ -140,6 +146,7 @@ class SellWP_Updater {
      * @return bool|object
      */
     public function check_info($false, $action, $arg) {
+        
 
         if ($arg->slug === $this->slug) {
             $information = $this->getRemote_information();
@@ -157,8 +164,10 @@ class SellWP_Updater {
         // Make the request
         if(!empty($this->license_key)){
             $request = wp_remote_post(
-                $this->update_path, 
-                array('body'              => array(
+                $this->api_url, 
+                array(
+                    'timeout'           => 15, 
+                    'body'              => array(
                     'action'            => 'version',
                     'uuid'              => $this->uuid,
                     'slug'              => $this->plugin_slug,
@@ -166,16 +175,17 @@ class SellWP_Updater {
                     'domain'            => $this->domain,
                     'installed_version' => $this->current_version
             )));
-            var_dump($request);
-
+            //var_dump($request);
             // Check for error and process
             if (!is_wp_error($request)) {
                 if(wp_remote_retrieve_response_code($request) === 200) {
 
-                    $response = maybe_unserialize(wp_remote_retrieve_body($response));
+                    $response = json_decode(wp_remote_retrieve_body($request));
 
-                    update_option(basename($this->slug).'_update_msg',$response->message);
-                    update_option(basename($this->slug).'_update_code',$response->code);
+                    if(isset($response->message))
+                        update_option(basename($this->slug).'_update_msg',$response->message);
+                    if(isset($response->code))
+                        update_option(basename($this->slug).'_update_code',$response->code);
 
                     return $response;
                 }
@@ -191,8 +201,9 @@ class SellWP_Updater {
     public function getRemote_information() {
         if(!empty($this->license_key)){
             $request = wp_remote_post(
-                $this->update_path, 
-                array('body' => array(
+                $this->api_url, 
+                array('timeout'         => 15, 
+                    'body'              => array(
                     'action'            => 'info',
                     'uuid'              => $this->uuid,
                     'slug'              => $this->plugin_slug,
@@ -205,12 +216,15 @@ class SellWP_Updater {
             if (!is_wp_error($request)) {
                 if(wp_remote_retrieve_response_code($request) === 200) {
 
-                    $response = maybe_unserialize(wp_remote_retrieve_body($response));
+                    $response = json_decode(wp_remote_retrieve_body($request));
 
                     if(isset($response->message))
                         update_option(basename($this->slug).'_update_msg',$response->message);
                     if(isset($response->code))
                         update_option(basename($this->slug).'_update_code',$response->code);
+
+                    if( $response && isset( $response->sections ) )
+                       $response->sections = (array) $response->sections;
 
                     return $response;
                 }
