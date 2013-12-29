@@ -40,12 +40,6 @@ class SellWP_Updater {
     public $uuid;  
 
     /**
-     * Unique theme or plugin id found in SellWP
-     * @var string
-     */
-    public $uuslug; 
-
-    /**
      * The plugin current version
      * @var string
      */
@@ -90,7 +84,7 @@ class SellWP_Updater {
      * @param string $domain
      * @param string $api_url
      */
-    function __construct($uuid, $license_key, $current_version,$uuslug) {
+    function __construct($uuid, $license_key, $current_version, $uuslug) {
 
         // Set the class public variables
         $this->current_version = $current_version;
