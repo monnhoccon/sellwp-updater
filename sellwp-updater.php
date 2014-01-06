@@ -84,7 +84,7 @@ class SellWP_Updater {
      * @param string $domain
      * @param string $api_url
      */
-    function __construct($uuid, $license_key, $current_version, $uuslug) {
+    function __construct($license_key= null, $current_version = null, $uuslug = null, $uuid = null) {
 
         // Set the class public variables
         $this->current_version = $current_version;
@@ -192,18 +192,30 @@ class SellWP_Updater {
      * Get information about the remote version
      * @return bool|object
      */
-    public function getRemote_information() {
+    public function getRemote_information($license_key = null, $current_version = null, $uuslug = null, $uuid = null) {
+        
         if(!empty($this->license_key)){
+            $license_key = $this->license_key;
+        }
+        if(!empty($this->plugin_slug)){
+            $uuslug = $this->plugin_slug;
+        }
+        if(!empty($this->current_version)){
+            $current_version = $this->current_version;
+        }
+
+
+        if(!empty($license_key)){
             $request = wp_remote_post(
                 $this->api_url, 
                 array('timeout'         => 15, 
                     'body'              => array(
                     'action'            => 'info',
                     'uuid'              => $this->uuid,
-                    'slug'              => $this->plugin_slug,
-                    'license_key'       => $this->license_key,
+                    'slug'              => $uuslug,
+                    'license_key'       => $license_key,
                     'domain'            => $this->domain,
-                    'installed_version' => $this->current_version
+                    'installed_version' => $current_version
             )));
 
             // Check for error and process
@@ -223,6 +235,8 @@ class SellWP_Updater {
                     return $response;
                 }
             }
+
+
 
             return false;
         }
