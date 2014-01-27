@@ -172,7 +172,7 @@ class SellWP_Updater {
             //var_dump($request);
             // Check for error and process
             if (!is_wp_error($request)) {
-                if(wp_remote_retrieve_response_code($request) === 200) {
+                if(wp_remote_retrieve_response_code($request) == 200) {
 
                     $response = json_decode(wp_remote_retrieve_body($request));
 
@@ -220,7 +220,7 @@ class SellWP_Updater {
 
             // Check for error and process
             if (!is_wp_error($request)) {
-                if(wp_remote_retrieve_response_code($request) === 200) {
+                if(wp_remote_retrieve_response_code($request) == 200) {
 
                     $response = json_decode(wp_remote_retrieve_body($request));
 
