@@ -15,9 +15,9 @@ add_action('init', 'YOUR_THEME_OR_PLUGIN_PREFIX_sellwp_updater');
 function YOUR_THEME_OR_PLUGIN_PREFIX_sellwp_updater() {
     include( 'sellwp-updater.php' );
     new SellWP_Updater(
-	    $uuid, 
 	    $license_key, 
-	    $current_version
+	    $current_version,
+	    plugin_basename(__FILE__)
     );
 }
 
